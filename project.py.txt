@@ -1,0 +1,22 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+df = pd.read_csv('raw_data.csv')
+
+df = df.drop_duplicates()
+
+for col in df.select_dtypes(include='number').columns:
+    df[col] = df[col].fillna(df[col].median())
+
+for col in df.select_dtypes(include='object').columns:
+    df[col] = df[col].fillna(df[col].mode()[0])
+
+df.to_csv('cleaned_data.csv', index=False)
+
+plt.figure(figsize=(8, 5))
+sns.histplot(df.select_dtypes(include='number').iloc[:, 0], kde=True)
+plt.title('Distribution of First Numeric Column')
+plt.tight_layout()
+plt.savefig('visualization.png')
+plt.close()
